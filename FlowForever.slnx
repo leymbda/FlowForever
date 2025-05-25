@@ -1,3 +1,6 @@
 <Solution>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/FlowForever.Domain.Tests.Unit/FlowForever.Domain.Tests.Unit.fsproj" Id="6e7563db-092e-4cbb-b34f-a197bec1a429" />
+  </Folder>
   <Project Path="FlowForever.Domain/FlowForever.Domain.fsproj" />
 </Solution>
