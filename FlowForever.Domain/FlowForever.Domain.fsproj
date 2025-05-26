@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="ValueObjects\Coordinate.fs" />
     <Compile Include="ValueObjects\Cell.fs" />
+    <Compile Include="ValueObjects\Matrix.fs" />
     <Compile Include="Entities\Line.fs" />
     <Compile Include="Entities\Board.fs" />
   </ItemGroup>

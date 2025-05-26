@@ -54,15 +54,12 @@ module Board =
     /// Get the current board state as a matrix of cells. Does not validate coordinates as is assumed this will only be
     /// run on a valid board state.
     let matrix board =
-        let init = List.init (snd board.Dimensions) (fun _ -> List.init (fst board.Dimensions) (fun _ -> Cell.Empty))
+        let w, h = board.Dimensions
+        let init = Matrix.init w h (fun _ _ -> Cell.Empty)
 
-        let folder (view: Cell list list) (index: int, line: Line) =
+        let folder view (index, line) =
             let draw coordinate cell view =
-                view |> List.mapi (fun y row ->
-                    row |> List.mapi (fun x v ->
-                        if x = coordinate.X && y = coordinate.Y then cell else v
-                    )
-                )
+                view |> Matrix.map (fun x y v -> if x = coordinate.X && y = coordinate.Y then cell else v)
 
             line.Path
             |> List.fold (fun view c -> draw c (Cell.Path index) view) view
