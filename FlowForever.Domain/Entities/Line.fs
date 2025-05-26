@@ -44,11 +44,15 @@ module Line =
         | Some i -> { line with Path = line.Path |> List.take (i + 1) }
         | _ -> line
 
-    /// Check if the line is completed by connecting the start and end point through the path. A line is not valid if
-    /// any point in its path touches more than two points, as this means it is passing by itself, or if the path is
-    /// disjointed, which should not occur if the record is only modified through provided functions.
-    let isConnected line =
-        let complete = line.Start :: (line.Path @ [line.End])
+    /// Returns all coordinates currently in the path. The end point is included but may not be connected to the path.
+    let getCurrentPath line =
+        line.Start :: (line.Path @ [line.End])
+
+    /// Attempt to get the complete valid path of the line. A line is not valid if any point in its path touches more
+    /// than two points, as this means it is passing by itself, or if the path is disjointed, which should not occur if
+    /// the record is only modified through provided functions.
+    let tryGetCompletePath line =
+        let coordinates = getCurrentPath line
 
         let isValidStart =
             line.Path
@@ -57,11 +61,11 @@ module Line =
             |> Option.defaultValue false
 
         let isValidPath =
-            complete
+            coordinates
             |> List.mapi (fun i c ->
-                match i = 0 || (i = List.length complete - 1) with
+                match i = 0 || (i = List.length coordinates - 1) with
                 | true -> []
-                | false -> [complete[i - 1], c, complete[i + 1]]
+                | false -> [coordinates[i - 1], c, coordinates[i + 1]]
             )
             |> List.collect id
             |> List.forall (fun (pre, cur, nex) -> Coordinate.isTouching pre cur && Coordinate.isTouching cur nex)
@@ -75,10 +79,12 @@ module Line =
         let isPathOverlapping =
             line.Path
             |> List.exists (fun c ->
-                complete
+                coordinates
                 |> List.filter (Coordinate.isTouching c)
                 |> List.length
                 |> (<>) 2
             )
 
-        isValidStart && isValidPath && isValidEnd && not isPathOverlapping
+        match isValidStart && isValidPath && isValidEnd && not isPathOverlapping with
+        | false -> None
+        | true -> Some coordinates
