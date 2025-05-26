@@ -50,3 +50,41 @@ module Board =
             |> apply (Some lineIndex) (Line.tryAddCoordinate coordinate)
 
         { board with Lines = updated }
+
+    /// Get the current board state as a matrix of cells. Does not validate coordinates as is assumed this will only be
+    /// run on a valid board state.
+    let matrix board =
+        let init = List.init (snd board.Dimensions) (fun _ -> List.init (fst board.Dimensions) (fun _ -> Cell.Empty))
+
+        let folder (view: Cell list list) (index: int, line: Line) =
+            let draw coordinate cell view =
+                view |> List.mapi (fun y row ->
+                    row |> List.mapi (fun x v ->
+                        if x = coordinate.X && y = coordinate.Y then cell else v
+                    )
+                )
+
+            line.Path
+            |> List.fold (fun view c -> draw c (Cell.Path index) view) view
+            |> draw line.Start (Cell.Start index)
+            |> draw line.End (Cell.End index)
+
+        board.Lines
+        |> List.mapi (fun i l -> i, l)
+        |> List.fold folder init
+
+    /// Print the current board state to the console. This should be removed/moved elsewhere but is here for now until
+    /// that correct spot is created (some kind of console app presentation layer?!)
+    let print board =
+        matrix board
+        |> List.map (
+            List.map (
+                function
+                | Cell.Empty -> " "
+                | Cell.Start i
+                | Cell.End i
+                | Cell.Path i -> string i // TODO: This will break on numbers greater than 9
+            )
+            >> List.fold (+) ""
+            >> printfn "%s"
+        )
