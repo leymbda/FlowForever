@@ -6,6 +6,15 @@ type Board = {
 }
 
 module Board =
+    /// Generate a new board with the given dimensions.
+    let generate w h seed =
+        // TODO: Use seed to generate lines with valid solution then put into lines list with empty paths
+
+        {
+            Dimensions = w, h
+            Lines = []
+        }
+
     /// Get the percentage of the board that is filled by completed lines. Does not check for cell conflicts.
     let getFilledAmount board =
         board.Lines
@@ -29,6 +38,20 @@ module Board =
             List.length paths <> List.length (List.distinct paths)
 
         isFilled && not hasConflicts
+
+    /// Attempt to get the value of the cell at the given coordinate. Returns None if the coordinate it outside the
+    /// dimensions of the board.
+    let tryGetCell coordinate board =
+        let mapper coordinate cell (index, line) =
+            match Line.isInLine coordinate line with
+            | true when Line.isStart coordinate line -> Cell.Start index
+            | true when Line.isEnd coordinate line -> Cell.End index
+            | true -> Cell.Path index
+            | _ -> cell
+
+        board.Lines
+        |> List.mapi (fun i v -> i, v)
+        |> List.fold (mapper coordinate) Cell.Empty
 
     /// Attempts to add the given coordinate to the given line. If it intersects a different line, that line is sliced
     /// to end before that coordinate. If it intersects itself, the path is sliced to before the coordinate, then the

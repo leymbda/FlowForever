@@ -11,6 +11,7 @@
     <Compile Include="ValueObjects\Matrix.fs" />
     <Compile Include="Entities\Line.fs" />
     <Compile Include="Entities\Board.fs" />
+    <Compile Include="Entities\Game.fs" />
   </ItemGroup>
 
 </Project>

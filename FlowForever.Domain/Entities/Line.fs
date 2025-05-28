@@ -48,6 +48,22 @@ module Line =
     let getCurrentPath line =
         line.Start :: (line.Path @ [line.End])
 
+    /// Returns if the given coordinate is the start point for the line.
+    let isStart coordinate line =
+        line.Start = coordinate
+        
+    /// Returns if the given coordinate is part of the line's path excluding start and end points.
+    let isPath coordinate line =
+        line.Path |> List.contains coordinate
+        
+    /// Returns if the given coordinate is the end point for the line.
+    let isEnd coordinate line =
+        line.End = coordinate
+        
+    /// Returns if the given coordinate is the start point, end point, or part of the line's path.
+    let isInLine coordinate line =
+        line |> getCurrentPath |> List.contains coordinate
+
     /// Attempt to get the complete valid path of the line. A line is not valid if any point in its path touches more
     /// than two points, as this means it is passing by itself, or if the path is disjointed, which should not occur if
     /// the record is only modified through provided functions.
