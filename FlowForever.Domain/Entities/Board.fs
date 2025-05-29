@@ -69,19 +69,3 @@ module Board =
         board.Lines
         |> List.mapi (fun i l -> i, l)
         |> List.fold folder init
-
-    /// Print the current board state to the console. This should be removed/moved elsewhere but is here for now until
-    /// that correct spot is created (some kind of console app presentation layer?!)
-    let print board =
-        matrix board
-        |> List.map (
-            List.map (
-                function
-                | Cell.Empty -> " "
-                | Cell.Start i
-                | Cell.End i
-                | Cell.Path i -> string i // TODO: This will break on numbers greater than 9
-            )
-            >> List.fold (+) ""
-            >> printfn "%s"
-        )
